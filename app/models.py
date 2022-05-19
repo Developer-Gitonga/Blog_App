@@ -10,7 +10,6 @@ def load_user(user_id):
 
 
 
-
 #User Database Model
 class User(db.Model,UserMixin):
     __tablename__ = 'users'
