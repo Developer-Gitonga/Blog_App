@@ -1,56 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='images/paper-plane.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/nav.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}"> {% block head %}{% endblock %}
-</head>
+  
+{% extends 'bootstrap/base.html' %}
 
-<body>
-    <section class="header-nav">
-        <nav>
-            <section class="nav">
-                <img src="{{ url_for('static',filename='images/pressly-logo.png') }}" alt="">
-                <ul class="nav-menu">
-                    <li><a href="{{ url_for('main.home') }}">Home</a></li>
-                    {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('users.profile') }}">Profile</a></li>
-                    <li><a href="{{ url_for('main.create') }}">Create</a></li>
-                    <li class="signup"><a href="{{ url_for('users.logout') }}">Logout</a></li>
-                    {% else %}
-                    <li><a href="{{ url_for('users.login') }}">Login</a></li>
-                    <li class="signup"><a href="{{ url_for('users.register') }}">Sign up</a></li>
-                    {% endif %}
-                </ul>
-                <div class="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
+<!-- Link all style files here -->
+{% block head %}
+    {{  super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+    
+<!-- The title of our application is defined here -->
+{% block title %}
+    {% if title %}
+        {{ title }} - Blog Share
+    {% else %}
+    <h1 align="center">Welcome to Blog Share</h1>
+    <img src="{{ url_for('static', filename='images/blog.jpg') }}" alt="">
+    {% endif %}
+{% endblock %}
+    
+<!-- This is the navbar -->
+{% block navbar %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" style="font-weight: bold;color: blue;" href="/"> Quote </a>
+            </div>
+            <div style="display: flex;">
+                {% if user.is_authenticated %}
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">            
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">Hello {{ user.username }}</a></li>
+                    </ul>                       
                 </div>
-            </section>
-        </nav>
-    </section>
-    {% with messages = get_flashed_messages() %} {% if messages %} {% for msg in messages %}
-    <div class="flashed" id="flashed">
-        <p>{{ msg }}</p>
-        <h4 id="closemsg">&times;</h4>
-    </div>{% endfor %} {% endif %} {% endwith %} {% block content %}{% endblock %}
-    <section class="footer">
-        <section class="footer-container">
-            <article class="footer-container-created">
-                <h3>Crafted with</h3>
-                <img src="{{ url_for('static', filename='images/heart.png') }}" alt="heart">
-                <h3>By <span>Dev Git</span></h3>
-            </article>
-        </section>
-    </section>
-    <script src="{{ url_for('static',filename='js/nav.js') }}"></script>
-    <script src="{{ url_for('static',filename='js/quit.js') }}"></script>
-</body>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">            
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout">Logout</a></li>
+                    </ul>                       
+                </div>
+                {% else %}
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">            
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href=" {{ url_for('login')}} ">Login</a></li>
+                    </ul>                       
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">            
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href=" {{ url_for('register')}} ">Register</a></li>
+                    </ul>                       
+                </div>
+                {% endif %}
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">            
+                    <ul class="nav navbar-nav navbar-right">
+                    <li><a href=" {{ url_for('quote')}} ">Blog</a></li>    
+                    
+                    </ul>                       
+                </div>
+            </div>
+        </div>
+    </nav>
+{% endblock %}
 
-</html>
+  
+<!-- Contents of all our pages will go here -->
+
+
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages()%}
+            {% if messages %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% for message in messages %}
+                        <div class="alert alert-info" role="alert">
+                            {{message}}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith%}
+{% block app_context %}{% endblock %}
+    </div>
+{% endblock %}
+    
+<!-- All scripts will go here -->
+{% block scripts %}
+<script>
+    const quote =document.querySelector("#quote");
+    const author =document.querySelector("#author");
+    const btnq =document.querySelector("#btnq");
+    btnq.addEventListener("click",getQuote);
+    function getQuote(){
+      fetch("http://quotes.stormconsultancy.co.uk/random.json").then(res =>(res.json()))
+      .then(data =>{
+        quote.innerHTML = `"${data.quote}"`;
+        author.innerHTML= data.author;
+      })
+    }
+  </script>
+        
+{% endblock %}
