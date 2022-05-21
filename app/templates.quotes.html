@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% import 'bootstrap/wtf.html' as wtf%}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{ title }}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6" style="padding: 50px;">
+        {{ wtf.quick_form(quoteForm)}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12" style="padding: 20px;">
+        {% for quote in quotes %}
+            {% include '_quote.html' %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+© 2022 GitHub, Inc.
+Terms
